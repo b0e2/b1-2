@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import StudyLogCard from '../components/study-logs/StudyLogCard.jsx'
+import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
 import LoadingState from '../components/ui/LoadingState.jsx'
 import { LeafIcon, PlusIcon } from '../components/ui/icons.jsx'
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
+import { selectRecentLogs } from '../lib/studyLogSelectors.js'
 
 const RECENT_LIMIT = 5
 
@@ -12,8 +15,14 @@ export default function DashboardPage() {
   const navigate = useNavigate()
   // 목록 화면과 같은 훅을 이 화면에서 따로 호출한다.
   // 공유 캐시를 두지 않아 화면마다 자기 로딩·에러 상태를 갖는다.
-  const { logs, isLoading, error, refetch } = useStudyLogs()
-  const recentLogs = logs.slice(0, RECENT_LIMIT)
+  const { logs, isLoading, error, refetch, deletingId, mutationError, removeLog } = useStudyLogs()
+  const [target, setTarget] = useState(null)
+  const recentLogs = selectRecentLogs(logs, RECENT_LIMIT)
+
+  async function confirmDelete() {
+    const removed = await removeLog(target.id)
+    if (removed) setTarget(null)
+  }
 
   function renderRecent() {
     if (isLoading) return <LoadingState message="최근 TIL을 불러오는 중입니다." />
@@ -42,7 +51,12 @@ export default function DashboardPage() {
       <ul className="log-list">
         {recentLogs.map((log) => (
           <li key={log.id}>
-            <StudyLogCard log={log} onEdit={(target) => navigate(`/logs/${target.id}/edit`)} />
+            <StudyLogCard
+              log={log}
+              isDeleting={deletingId === log.id}
+              onEdit={(item) => navigate(`/logs/${item.id}/edit`)}
+              onDelete={setTarget}
+            />
           </li>
         ))}
       </ul>
@@ -87,8 +101,24 @@ export default function DashboardPage() {
             </Link>
           ) : null}
         </div>
+        {mutationError && !target ? (
+          <p className="form__alert" role="alert">
+            {mutationError}
+          </p>
+        ) : null}
         {renderRecent()}
       </section>
+
+      <ConfirmDialog
+        open={Boolean(target)}
+        title="이 TIL을 삭제할까요?"
+        description={target ? `“${target.title}” 기록이 사라집니다. 되돌릴 수 없습니다.` : ''}
+        confirmLabel="삭제"
+        isProcessing={Boolean(target) && deletingId === target.id}
+        error={mutationError}
+        onCancel={() => setTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   )
 }

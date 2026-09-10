@@ -1,49 +1,45 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import StudyLogCard from '../components/study-logs/StudyLogCard.jsx'
 import Button from '../components/ui/Button.jsx'
+import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
 import LoadingState from '../components/ui/LoadingState.jsx'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import TagBadge from '../components/ui/TagBadge.jsx'
-import { PlusIcon } from '../components/ui/icons.jsx'
+import { PlusIcon, SearchIcon } from '../components/ui/icons.jsx'
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
+import { readLogSearchParams, SORT_OPTIONS, writeLogSearchParams } from '../lib/searchParams.js'
+import { filterStudyLogs, getTagCounts, sortStudyLogs } from '../lib/studyLogSelectors.js'
 
 export default function StudyLogsPage() {
   const navigate = useNavigate()
-  const { logs, isLoading, error, refetch } = useStudyLogs()
-  // 태그 선택은 화면 안에서만 쓰는 상태다.
-  // useStudyLogs 에 넘기지 않으므로 선택을 바꿔도 요청이 나가지 않는다.
-  const [selectedTag, setSelectedTag] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { logs, isLoading, error, refetch, deletingId, mutationError, removeLog } = useStudyLogs()
 
-  const tagOptions = useMemo(() => {
-    const counts = new Map()
-    for (const log of logs) {
-      for (const tag of log.tags ?? []) {
-        const key = tag.toLowerCase()
-        const entry = counts.get(key) ?? { tag, count: 0 }
-        entry.count += 1
-        counts.set(key, entry)
-      }
-    }
-    return [...counts.values()].sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag))
-  }, [logs])
+  // 조회 조건은 주소에 있다. 훅에 넘기지 않으므로 바꿔도 요청이 나가지 않는다.
+  const { query, tag, sort } = readLogSearchParams(searchParams)
+  const [draftQuery, setDraftQuery] = useState(query)
+  const [target, setTarget] = useState(null)
 
+  const patchParams = (patch) => setSearchParams(writeLogSearchParams(searchParams, { query, tag, sort, ...patch }))
+
+  const tagCounts = useMemo(() => getTagCounts(logs), [logs])
   const visibleLogs = useMemo(
-    () =>
-      selectedTag
-        ? logs.filter((log) => (log.tags ?? []).some((tag) => tag.toLowerCase() === selectedTag))
-        : logs,
-    [logs, selectedTag],
+    () => sortStudyLogs(filterStudyLogs(logs, { query, tag }), sort),
+    [logs, query, tag, sort],
   )
 
-  // 상태 판정 순서를 모든 화면에서 똑같이 유지한다.
-  // 로딩 → 에러 → 데이터 없음 → 성공.
+  const hasCondition = Boolean(query || tag)
+
+  async function confirmDelete() {
+    const removed = await removeLog(target.id)
+    if (removed) setTarget(null)
+  }
+
   function renderBody() {
-    if (isLoading) {
-      return <LoadingState message="TIL을 불러오는 중입니다." />
-    }
+    if (isLoading) return <LoadingState message="TIL을 불러오는 중입니다." />
 
     if (error) {
       return (
@@ -54,7 +50,7 @@ export default function StudyLogsPage() {
       )
     }
 
-    // 등록된 기록이 아예 없는 경우와 필터 결과가 없는 경우를 구분한다.
+    // 아직 하나도 없는 경우와 조건에 맞는 것이 없는 경우는 다른 상황이다.
     if (logs.length === 0) {
       return (
         <EmptyState
@@ -70,9 +66,12 @@ export default function StudyLogsPage() {
       return (
         <EmptyState
           title="조건에 맞는 TIL이 없습니다."
-          description="다른 태그를 골라보세요."
-          actionLabel="필터 초기화"
-          onAction={() => setSelectedTag(null)}
+          description="검색어나 태그를 바꿔보세요."
+          actionLabel="조건 초기화"
+          onAction={() => {
+            setDraftQuery('')
+            patchParams({ query: '', tag: '' })
+          }}
         />
       )
     }
@@ -81,7 +80,12 @@ export default function StudyLogsPage() {
       <ul className="log-list">
         {visibleLogs.map((log) => (
           <li key={log.id}>
-            <StudyLogCard log={log} onEdit={(target) => navigate(`/logs/${target.id}/edit`)} />
+            <StudyLogCard
+              log={log}
+              isDeleting={deletingId === log.id}
+              onEdit={(item) => navigate(`/logs/${item.id}/edit`)}
+              onDelete={setTarget}
+            />
           </li>
         ))}
       </ul>
@@ -99,22 +103,86 @@ export default function StudyLogsPage() {
           </Button>
         }
       />
-      {tagOptions.length > 0 ? (
-        <div className="filter-bar">
-          <TagBadge label="전체" selected={!selectedTag} onClick={() => setSelectedTag(null)} />
-          {tagOptions.map(({ tag, count }) => (
-            <TagBadge
-              key={tag}
-              tag={tag}
-              count={count}
-              selected={selectedTag === tag.toLowerCase()}
-              onClick={() => setSelectedTag(tag.toLowerCase())}
-            />
-          ))}
+
+      <div className="toolbar">
+        <form
+          className="toolbar__search"
+          role="search"
+          onSubmit={(event) => {
+            event.preventDefault()
+            patchParams({ query: draftQuery.trim() })
+          }}
+        >
+          <label htmlFor="log-search" className="sr-only">
+            TIL 검색
+          </label>
+          <SearchIcon />
+          <input
+            id="log-search"
+            type="search"
+            value={draftQuery}
+            placeholder="TIL 제목이나 내용을 검색해보세요."
+            onChange={(event) => setDraftQuery(event.target.value)}
+          />
+        </form>
+
+        <div className="toolbar__row">
+          <div className="filter-bar">
+            <TagBadge label="전체" selected={!tag} onClick={() => patchParams({ tag: '' })} />
+            {tagCounts.map(({ tag: name, count }) => (
+              <TagBadge
+                key={name}
+                tag={name}
+                count={count}
+                selected={tag.toLowerCase() === name.toLowerCase()}
+                onClick={() => patchParams({ tag: name })}
+              />
+            ))}
+          </div>
+
+          <label className="toolbar__sort">
+            <span className="sr-only">정렬</span>
+            <select
+              className="input"
+              value={sort}
+              onChange={(event) => patchParams({ sort: event.target.value })}
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
+
+        {hasCondition && !isLoading && !error ? (
+          <p className="toolbar__result">
+            {query ? `“${query}” ` : ''}
+            {tag ? `#${tag} ` : ''}
+            검색 결과 {visibleLogs.length}건
+          </p>
+        ) : null}
+      </div>
+
+      {mutationError && !target ? (
+        <p className="form__alert" role="alert">
+          {mutationError}
+        </p>
       ) : null}
 
       {renderBody()}
+
+      <ConfirmDialog
+        open={Boolean(target)}
+        title="이 TIL을 삭제할까요?"
+        description={target ? `“${target.title}” 기록이 사라집니다. 되돌릴 수 없습니다.` : ''}
+        confirmLabel="삭제"
+        isProcessing={Boolean(target) && deletingId === target.id}
+        error={mutationError}
+        onCancel={() => setTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   )
 }

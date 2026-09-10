@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { STUDY_LOGS_TABLE, supabase } from '../lib/supabaseClient.js'
 
 // 학습 기록 전체 목록을 담당한다.
@@ -14,12 +14,39 @@ export function useStudyLogs() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [reloadKey, setReloadKey] = useState(0)
+  const [deletingId, setDeletingId] = useState(null)
+  const [mutationError, setMutationError] = useState('')
+  const mounted = useRef(true)
 
   const refetch = useCallback(() => {
     setReloadKey((key) => key + 1)
   }, [])
 
+  // 삭제는 서버가 성공을 돌려준 뒤에만 화면에서 지운다.
+  // 미리 지우면 실패했을 때 사라진 행을 되살려야 한다.
+  const removeLog = useCallback(async (targetId) => {
+    setDeletingId(targetId)
+    setMutationError('')
+
+    const { error: requestError } = await supabase
+      .from(STUDY_LOGS_TABLE)
+      .delete()
+      .eq('id', targetId)
+
+    if (!mounted.current) return false
+    setDeletingId(null)
+
+    if (requestError) {
+      setMutationError('삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.')
+      return false
+    }
+
+    setLogs((current) => current.filter((log) => log.id !== targetId))
+    return true
+  }, [])
+
   useEffect(() => {
+    mounted.current = true
     const controller = new AbortController()
     let active = true
 
@@ -51,9 +78,10 @@ export function useStudyLogs() {
 
     return () => {
       active = false
+      mounted.current = false
       controller.abort()
     }
   }, [reloadKey])
 
-  return { logs, isLoading, error, refetch }
+  return { logs, isLoading, error, refetch, deletingId, mutationError, removeLog }
 }
