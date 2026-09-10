@@ -787,3 +787,194 @@ a {
   gap: var(--space-2);
   margin-bottom: var(--space-5);
 }
+
+/* ── 폼 ─────────────────────────────────────────────── */
+.form {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 760px;
+}
+
+.form__alert {
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.form__card {
+  display: grid;
+  gap: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+
+.form__card-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* ── 입력 필드 ──────────────────────────────────────── */
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.field__label {
+  font-size: 0.925rem;
+  font-weight: 600;
+}
+
+.field__required {
+  color: var(--color-danger);
+}
+
+.field__count,
+.field__hint {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.field__error {
+  color: var(--color-danger);
+  font-size: 0.8125rem;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  transition: border-color var(--transition);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.input--textarea {
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.925rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+/* ── 태그 입력 ──────────────────────────────────────── */
+.tag-input-wrap {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.tag-input:focus-within {
+  border-color: var(--color-primary);
+}
+
+.tag-input--invalid {
+  border-color: var(--color-danger);
+}
+
+.tag-input__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.tag-input__remove {
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--space-1);
+}
+
+.tag-input__field {
+  flex: 1;
+  min-width: 8rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--color-text);
+  outline: none;
+}
+
+.tag-input__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tag-input__suggestions-label {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 900px) {
+  .form__row {
+    grid-template-columns: 1fr;
+  }
+}
