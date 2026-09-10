@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# 마이그레이션 전 임시 백업
+supabase/backup-*.json
