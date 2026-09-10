@@ -304,11 +304,42 @@ a {
 
 /* ── 히어로 ─────────────────────────────────────────── */
 .hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 300px;
   padding: var(--space-10);
   border-radius: var(--radius-lg);
+  overflow: hidden;
   background:
-    radial-gradient(120% 140% at 85% 15%, #e8e6d6 0%, transparent 60%),
-    linear-gradient(135deg, #efece0 0%, #e6e6d8 100%);
+    radial-gradient(120% 150% at 88% 12%, #eae7d6 0%, transparent 62%),
+    linear-gradient(135deg, #f0ede1 0%, #e5e6d6 100%);
+}
+
+.hero__body {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+}
+
+/* 디자인의 사진 자리. 원본 자산이 없어 잎사귀 모티프로 대체한다. */
+.hero__ornament {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-8);
+  padding-right: var(--space-8);
+  color: var(--color-primary);
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.hero__ornament svg:last-child {
+  align-self: flex-end;
+  margin-bottom: var(--space-10);
+  transform: rotate(24deg);
 }
 
 .hero__eyebrow {
@@ -336,6 +367,31 @@ a {
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-6);
+}
+
+/* ── 섹션 ───────────────────────────────────────────── */
+.section {
+  margin-top: var(--space-10);
+}
+
+.section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.section__title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.section__description {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
 }
 
 /* ── 페이지 헤더 ────────────────────────────────────── */
@@ -456,6 +512,11 @@ a {
 
   .hero {
     padding: var(--space-6);
+    min-height: 0;
+  }
+
+  .hero__ornament {
+    display: none;
   }
 
   .hero__title {

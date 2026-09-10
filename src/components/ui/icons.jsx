@@ -71,10 +71,9 @@ export const MenuIcon = () => (
   </svg>
 )
 
-export const LeafIcon = () => (
-  <svg {...base} width="56" height="56" strokeWidth={1.2}>
-    <path d="M20 4c0 8.5-5 14-11 14-2.2 0-3.8-.6-4.8-1.4" />
-    <path d="M4 20c1.6-6.5 6-11 12.5-13" />
-    <path d="M13 6.5c1.6 1 2.6 2.6 3 4.4" />
+export const LeafIcon = ({ size = 56, strokeWidth = 1.3 }) => (
+  <svg {...base} width={size} height={size} strokeWidth={strokeWidth}>
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
   </svg>
 )

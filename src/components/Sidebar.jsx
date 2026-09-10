@@ -24,7 +24,7 @@ export default function Sidebar({ onNavigate }) {
       <NavLink to="/" className="sidebar__brand" onClick={onNavigate}>
         <span className="sidebar__brand-mark">
           TIL
-          <LeafIcon />
+          <LeafIcon size={22} strokeWidth={1.7} />
         </span>
         <span className="sidebar__brand-sub">Today I Learned</span>
       </NavLink>
@@ -47,7 +47,7 @@ export default function Sidebar({ onNavigate }) {
       </nav>
 
       <div className="sidebar__foot">
-        <LeafIcon />
+        <LeafIcon size={52} />
         <blockquote className="sidebar__quote">
           &ldquo;작은 배움이
           <br />큰 변화를 만든다.&rdquo;
