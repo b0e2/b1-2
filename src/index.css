@@ -585,7 +585,7 @@ a {
 .badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0 var(--space-3);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -598,13 +598,54 @@ a {
 }
 
 .badge--done {
-  background: #e3f3ea;
-  color: var(--color-success);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .badge--ongoing {
-  background: #eceff3;
+  background: rgb(121 128 116 / 12%);
   color: var(--color-text-muted);
+}
+
+/* ── 태그 배지 ──────────────────────────────────────── */
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  background: rgb(121 128 116 / 10%);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tag-badge--sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+}
+
+.tag-badge--clickable {
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tag-badge--clickable:hover {
+  background: rgb(74 90 60 / 12%);
+  color: var(--color-text);
+}
+
+.tag-badge--selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.tag-badge__count {
+  opacity: 0.7;
+  font-size: 0.75rem;
 }
 
 /* ── 학습 기록 목록 ─────────────────────────────────── */
@@ -616,65 +657,133 @@ a {
   list-style: none;
 }
 
-.log-card {
+.log-row {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) auto auto auto auto;
+  align-items: center;
+  gap: var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-4);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-card);
   transition: border-color var(--transition);
 }
 
-.log-card:hover {
+.log-row:hover {
   border-color: var(--color-primary);
 }
 
-.log-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+/* 이미지 업로드 대신 대표 태그의 색과 이니셜로 채운다. */
+.log-row__thumb {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 58px;
+  border-radius: var(--radius);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.log-card__title {
+.log-row__thumb--olive { background: #dfe6d3; color: #4a5a3c; }
+.log-row__thumb--sage  { background: #e3eadf; color: #4b6350; }
+.log-row__thumb--moss  { background: #d9e3d8; color: #3f5741; }
+.log-row__thumb--clay  { background: #ece0d4; color: #7a5c43; }
+.log-row__thumb--sand  { background: #eee8d8; color: #7a6a44; }
+
+.log-row__body {
+  min-width: 0;
+}
+
+.log-row__title {
   font-size: 1.0625rem;
   font-weight: 600;
 }
 
-.log-card__title:hover {
+.log-row__title:hover {
   color: var(--color-primary);
 }
 
-.log-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
-  margin: var(--space-3) 0 0;
+.log-row__summary {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
   font-size: 0.875rem;
-}
-
-.log-card__meta div {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.log-card__meta dt {
-  color: var(--color-text-muted);
-}
-
-.log-card__meta dd {
-  margin: 0;
-  font-weight: 500;
-}
-
-.log-card__content {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 0.925rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.log-row__tags {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.log-row__more {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.log-row__date {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.log-row__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 900px) {
+  /* 좁은 화면에서는 한 줄에 다 넣지 않고 두 단으로 접는다.
+     같은 grid-area 에 여러 요소를 넣으면 서로 겹치므로 flex 로 바꾼다. */
+  .log-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: var(--space-3);
+  }
+
+  .log-row__thumb {
+    width: 56px;
+    height: 56px;
+    font-size: 1rem;
+  }
+
+  .log-row__body {
+    flex: 1 1 60%;
+  }
+
+  .log-row__tags,
+  .log-row__date,
+  .log-row .badge,
+  .log-row__actions {
+    flex: 0 0 auto;
+  }
+
+  .log-row__tags {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .log-row__date,
+  .log-row .badge {
+    order: 4;
+  }
+
+  .log-row__actions {
+    order: 5;
+    margin-left: auto;
+  }
+}
+
+/* ── 필터 바 ────────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
 }

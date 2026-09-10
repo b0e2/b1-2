@@ -13,7 +13,7 @@ create table if not exists public.study_logs (
   user_id          uuid        references auth.users (id) on delete cascade,
 
   title            text        not null,
-  subject          text        not null,
+  tags             text[]      not null,
   study_date       date        not null,
   duration_minutes integer     not null,
   understanding    smallint    not null,
@@ -24,11 +24,22 @@ create table if not exists public.study_logs (
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now(),
 
+  -- 태그는 별도 테이블로 분리하지 않는다. 핵심 데이터가 하나라는 조건을 지키고,
+  -- 인기 태그 집계와 태그별 목록은 클라이언트에서 계산한다.
+
   -- 공백만 저장되는 것을 막기 위해 양끝 공백을 제거한 길이로 검사한다.
   constraint study_logs_title_length
     check (char_length(btrim(title)) between 2 and 80),
-  constraint study_logs_subject_length
-    check (char_length(btrim(subject)) between 2 and 30),
+  constraint study_logs_tags_count
+    check (cardinality(tags) between 1 and 5),
+  constraint study_logs_tags_no_null
+    check (array_position(tags, null) is null),
+  constraint study_logs_tags_no_empty
+    check (array_position(tags, '') is null),
+  -- CHECK 제약에는 서브쿼리를 쓸 수 없어 원소별 길이를 직접 검사하지 못한다.
+  -- 전체 길이로 상한만 두고 원소별 30자 규칙은 애플리케이션이 담당한다.
+  constraint study_logs_tags_total_length
+    check (char_length(array_to_string(tags, ',')) <= 160),
   constraint study_logs_content_length
     check (char_length(btrim(content)) between 10 and 3000),
 

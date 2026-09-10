@@ -42,3 +42,34 @@ export function formatUnderstanding(value) {
 export function formatCompletionStatus(isCompleted) {
   return isCompleted ? '완료' : '진행 중'
 }
+
+// ── 태그 ─────────────────────────────────────────────
+
+// 저장값은 'React' 지만 화면에는 '#React' 로 보여준다.
+export function formatTag(tag) {
+  return `#${tag}`
+}
+
+export function getTagInitial(tag) {
+  const text = String(tag ?? '').trim()
+  if (!text) return '?'
+  // 영문은 두 글자, 그 외(한글 등)는 한 글자가 자연스럽다.
+  return /^[a-zA-Z]/.test(text) ? text.slice(0, 2).toUpperCase() : text.slice(0, 1)
+}
+
+const TAG_TONES = ['olive', 'sage', 'moss', 'clay', 'sand']
+
+// 같은 태그는 언제나 같은 색을 얻는다.
+// 목록에서 태그를 색으로 구분할 수 있게 하되 DB 에 색을 저장하지 않는다.
+export function getTagTone(tag) {
+  const text = String(tag ?? '')
+  let hash = 0
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (hash * 31 + text.charCodeAt(i)) % 100000
+  }
+  return TAG_TONES[hash % TAG_TONES.length]
+}
+
+export function formatMonthLabel(monthIndex) {
+  return `${monthIndex + 1}월`
+}
