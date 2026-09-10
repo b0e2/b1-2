@@ -1209,3 +1209,36 @@ a {
     flex-direction: column;
   }
 }
+
+/* ── 태그 화면 ──────────────────────────────────────── */
+.tags__search {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+}
+
+.section--tight {
+  margin-top: 0;
+}
+
+.section__title--sm {
+  font-size: 1.0625rem;
+  margin-bottom: var(--space-3);
+}
+
+.section__count {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.tags__none,
+.tags__hint {
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.tags__hint {
+  margin-top: var(--space-8);
+  text-align: center;
+}
