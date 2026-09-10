@@ -42,7 +42,7 @@ export default function DashboardPage() {
       <ul className="log-list">
         {recentLogs.map((log) => (
           <li key={log.id}>
-            <StudyLogCard log={log} />
+            <StudyLogCard log={log} onEdit={(target) => navigate(`/logs/${target.id}/edit`)} />
           </li>
         ))}
       </ul>
