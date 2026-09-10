@@ -1146,3 +1146,66 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── 목록 도구 모음 ─────────────────────────────────── */
+.toolbar {
+  display: grid;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-card);
+}
+
+.toolbar__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+}
+
+.toolbar__search:focus-within {
+  border-color: var(--color-primary);
+}
+
+.toolbar__search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--color-text);
+  outline: none;
+}
+
+.toolbar__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.toolbar__row .filter-bar {
+  margin-bottom: 0;
+}
+
+.toolbar__sort .input {
+  width: auto;
+  padding: var(--space-2) var(--space-3);
+}
+
+.toolbar__result {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 900px) {
+  .toolbar__row {
+    flex-direction: column;
+  }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDownIcon, MenuIcon, SearchIcon } from './ui/icons.jsx'
+import { buildGlobalSearchPath } from '../lib/searchParams.js'
 
 // 상단 고정 영역. 전역 검색과 사용자 표시를 담당한다.
 // 내비게이션 책임은 Sidebar 로 옮겼다.
@@ -14,8 +15,7 @@ export default function Header({ onOpenNav }) {
 
   function handleSubmit(event) {
     event.preventDefault()
-    const query = term.trim()
-    navigate(query ? `/logs?q=${encodeURIComponent(query)}` : '/logs')
+    navigate(buildGlobalSearchPath(term))
   }
 
   return (
