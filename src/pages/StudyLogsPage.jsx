@@ -1,27 +1,32 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import StudyLogCard from '../components/study-logs/StudyLogCard.jsx'
 import Button from '../components/ui/Button.jsx'
-import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
+import DeleteLogDialog, { useLogDeletion } from '../components/study-logs/DeleteLogDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
 import LoadingState from '../components/ui/LoadingState.jsx'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import TagBadge from '../components/ui/TagBadge.jsx'
 import { PlusIcon, SearchIcon } from '../components/ui/icons.jsx'
+
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
-import { readLogSearchParams, SORT_OPTIONS, writeLogSearchParams } from '../lib/searchParams.js'
+import { readLogSearchParams, SORT_OPTIONS, writeLogSearchParams } from '../lib/studyLogSelectors.js'
 import { filterStudyLogs, getTagCounts, sortStudyLogs } from '../lib/studyLogSelectors.js'
 
 export default function StudyLogsPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { logs, isLoading, error, refetch, deletingId, mutationError, removeLog } = useStudyLogs()
+  const deletion = useLogDeletion(removeLog)
+
+  // 카드에 넘기는 함수를 고정한다. 매 렌더마다 새 함수를 만들면
+  // memo 로 감싼 카드가 매번 달라진 props 를 받아 다시 그려진다.
+  const goEdit = useCallback((item) => navigate(`/logs/${item.id}/edit`), [navigate])
 
   // 조회 조건은 주소에 있다. 훅에 넘기지 않으므로 바꿔도 요청이 나가지 않는다.
   const { query, tag, sort } = readLogSearchParams(searchParams)
   const [draftQuery, setDraftQuery] = useState(query)
-  const [target, setTarget] = useState(null)
 
   const patchParams = (patch) => setSearchParams(writeLogSearchParams(searchParams, { query, tag, sort, ...patch }))
 
@@ -32,11 +37,6 @@ export default function StudyLogsPage() {
   )
 
   const hasCondition = Boolean(query || tag)
-
-  async function confirmDelete() {
-    const removed = await removeLog(target.id)
-    if (removed) setTarget(null)
-  }
 
   function renderBody() {
     if (isLoading) return <LoadingState message="TIL을 불러오는 중입니다." />
@@ -83,8 +83,8 @@ export default function StudyLogsPage() {
             <StudyLogCard
               log={log}
               isDeleting={deletingId === log.id}
-              onEdit={(item) => navigate(`/logs/${item.id}/edit`)}
-              onDelete={setTarget}
+              onEdit={goEdit}
+              onDelete={deletion.ask}
             />
           </li>
         ))}
@@ -165,7 +165,7 @@ export default function StudyLogsPage() {
         ) : null}
       </div>
 
-      {mutationError && !target ? (
+      {mutationError && !deletion.target ? (
         <p className="form__alert" role="alert">
           {mutationError}
         </p>
@@ -173,15 +173,12 @@ export default function StudyLogsPage() {
 
       {renderBody()}
 
-      <ConfirmDialog
-        open={Boolean(target)}
-        title="이 TIL을 삭제할까요?"
-        description={target ? `“${target.title}” 기록이 사라집니다. 되돌릴 수 없습니다.` : ''}
-        confirmLabel="삭제"
-        isProcessing={Boolean(target) && deletingId === target.id}
+      <DeleteLogDialog
+        target={deletion.target}
+        isDeleting={deletion.target?.id === deletingId}
         error={mutationError}
-        onCancel={() => setTarget(null)}
-        onConfirm={confirmDelete}
+        onCancel={deletion.cancel}
+        onConfirm={deletion.confirm}
       />
     </>
   )

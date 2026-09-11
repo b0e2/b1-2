@@ -56,6 +56,30 @@ export function getTagCounts(logs) {
   return [...counts.values()].sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag))
 }
 
+// 태그 하나당 개수와 대표 기록 제목을 묶어 돌려준다.
+// 태그 화면이 기록 목록을 그대로 또 보여줄 필요 없이
+// 어떤 주제를 얼마나 다뤘는지만 보여주면 되기 때문이다.
+export function getTagSummaries(logs, { sort = 'count', preview = 2 } = {}) {
+  const counts = getTagCounts(logs)
+
+  const summaries = counts.map(({ tag, count }) => ({
+    tag,
+    count,
+    titles: sortStudyLogs(selectLogsByTag(logs, tag), 'recent')
+      .slice(0, preview)
+      .map((log) => log.title),
+  }))
+
+  return sort === 'name'
+    ? summaries.sort((a, b) => a.tag.localeCompare(b.tag))
+    : summaries
+}
+
+function selectLogsByTag(logs, tag) {
+  const needle = tag.toLowerCase()
+  return logs.filter((log) => (log.tags ?? []).some((item) => item.toLowerCase() === needle))
+}
+
 export function selectRecentLogs(logs, limit = 5) {
   return sortStudyLogs(logs, 'recent').slice(0, limit)
 }
@@ -78,7 +102,7 @@ function shiftDays(dateKey, days) {
 //
 // 오늘 아직 안 썼을 수 있으므로 어제부터 시작하는 경우도 연속으로 인정한다.
 // 그러지 않으면 매일 자정에 기록이 끊긴 것처럼 보인다.
-export function calculateStudyStreak(logs, today) {
+function calculateStudyStreak(logs, today) {
   const days = new Set(logs.map((log) => toDateKey(log.study_date)))
   if (days.size === 0) return 0
 
@@ -126,4 +150,53 @@ export function getMonthlyCounts(logs, year) {
 
 export function rankTags(logs, limit = 5) {
   return getTagCounts(logs).slice(0, limit)
+}
+
+// 목록 화면의 조회 조건을 주소에서 읽고 쓴다.
+// 헤더와 목록이 각자 규칙을 만들면 파라미터 이름이 갈리므로 여기 모은다.
+//
+// 이 값들은 화면 안에서만 쓰인다. 원격 조회의 의존성에 들어가지 않으므로
+// 검색어를 한 글자 칠 때마다 요청이 나가지 않는다.
+
+export const SORT_OPTIONS = [
+  { value: 'recent', label: '최신순' },
+  { value: 'oldest', label: '오래된순' },
+  { value: 'longest', label: '학습시간 긴 순' },
+  { value: 'understanding', label: '이해도 높은 순' },
+]
+
+const DEFAULT_SORT = 'recent'
+
+export function readLogSearchParams(searchParams) {
+  const sort = searchParams.get('sort')
+
+  return {
+    query: searchParams.get('q') ?? '',
+    tag: searchParams.get('tag') ?? '',
+    sort: SORT_OPTIONS.some((option) => option.value === sort) ? sort : DEFAULT_SORT,
+  }
+}
+
+// 기본값은 주소에 남기지 않는다. 빈 파라미터가 붙은 주소는 공유하기 나쁘다.
+export function writeLogSearchParams(current, patch) {
+  const next = new URLSearchParams(current)
+
+  const entries = {
+    q: patch.query,
+    tag: patch.tag,
+    sort: patch.sort === DEFAULT_SORT ? '' : patch.sort,
+  }
+
+  for (const [key, value] of Object.entries(entries)) {
+    if (value === undefined) continue
+    if (value) next.set(key, value)
+    else next.delete(key)
+  }
+
+  return next
+}
+
+export function buildGlobalSearchPath(query) {
+  const trimmed = String(query ?? '').trim()
+  return trimmed ? `/logs?q=${encodeURIComponent(trimmed)}` : '/logs'
 }

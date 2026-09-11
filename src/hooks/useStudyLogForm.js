@@ -1,15 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
-import {
-  normalizeStudyLogInput,
-  validateStudyLog,
-} from '../lib/studyLogValidation.js'
-
-function todayString() {
-  const now = new Date()
-  const pad = (n) => String(n).padStart(2, '0')
-  // toISOString 은 UTC 기준이라 자정 전후로 날짜가 어긋난다. 로컬 날짜를 쓴다.
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-}
+import { todayString } from '../lib/studyLogFormatters.js'
+import { normalizeStudyLogInput, validateStudyLog } from '../lib/studyLogValidation.js'
 
 // 폼의 입력 상태와 제출 흐름만 담당한다.
 // 값이 유효한지 판정하는 규칙은 lib 의 순수 함수가 갖는다.

@@ -4,12 +4,11 @@
 
 export const DURATION_MINUTES_MIN = 5
 export const DURATION_MINUTES_MAX = 720
-export const UNDERSTANDING_MIN = 1
-export const UNDERSTANDING_MAX = 5
-export const TAGS_MIN = 1
+const UNDERSTANDING_MIN = 1
+const UNDERSTANDING_MAX = 5
+const TAGS_MIN = 1
 export const TAGS_MAX = 5
-export const TAG_LENGTH_MIN = 1
-export const TAG_LENGTH_MAX = 30
+const TAG_LENGTH_MAX = 30
 
 export const STUDY_LOG_INITIAL_VALUES = {
   title: '',
@@ -52,7 +51,7 @@ export function normalizeTags(tags) {
   return result
 }
 
-export function validateTags(tags) {
+function validateTags(tags) {
   const normalized = normalizeTags(tags)
 
   if (normalized.length < TAGS_MIN) return '태그를 최소 1개 입력해 주세요.'
@@ -66,7 +65,7 @@ export function validateTags(tags) {
 
 // ── 개별 필드 ────────────────────────────────────────
 
-export function validateTitle(value) {
+function validateTitle(value) {
   const title = String(value ?? '').trim()
   if (!title) return '제목을 입력해 주세요.'
   if (title.length < 2) return '제목은 2자 이상 입력해 주세요.'
@@ -75,7 +74,7 @@ export function validateTitle(value) {
 }
 
 // today 를 인자로 받는다. 순수 함수를 유지하면서 '오늘'의 판정을 호출자에게 넘긴다.
-export function validateStudyDate(value, today) {
+function validateStudyDate(value, today) {
   const date = String(value ?? '').trim()
   if (!date) return '학습한 날짜를 선택해 주세요.'
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return '날짜 형식이 올바르지 않습니다.'
@@ -83,7 +82,7 @@ export function validateStudyDate(value, today) {
   return ''
 }
 
-export function validateDurationMinutes(value) {
+function validateDurationMinutes(value) {
   if (value === '' || value === null || value === undefined) {
     return '학습 시간을 입력해 주세요.'
   }
@@ -95,7 +94,7 @@ export function validateDurationMinutes(value) {
   return ''
 }
 
-export function validateUnderstanding(value) {
+function validateUnderstanding(value) {
   const level = Number(value)
   if (!Number.isInteger(level) || level < UNDERSTANDING_MIN || level > UNDERSTANDING_MAX) {
     return '이해도를 선택해 주세요.'
@@ -103,7 +102,7 @@ export function validateUnderstanding(value) {
   return ''
 }
 
-export function validateContent(value) {
+function validateContent(value) {
   const content = String(value ?? '').trim()
   if (!content) return '학습한 내용을 입력해 주세요.'
   if (content.length < 10) return '학습 내용은 10자 이상 입력해 주세요.'
@@ -112,7 +111,7 @@ export function validateContent(value) {
 }
 
 // 완료 상태에는 회고가 있어야 한다. 기록과 회고를 함께 남기는 것이 이 서비스의 목적이다.
-export function validateReflection(value, isCompleted) {
+function validateReflection(value, isCompleted) {
   const reflection = String(value ?? '').trim()
 
   if (isCompleted) {
@@ -124,7 +123,7 @@ export function validateReflection(value, isCompleted) {
   return ''
 }
 
-export function isValidHttpUrl(value) {
+function isValidHttpUrl(value) {
   try {
     const url = new URL(value)
     return url.protocol === 'http:' || url.protocol === 'https:'
@@ -133,7 +132,7 @@ export function isValidHttpUrl(value) {
   }
 }
 
-export function validateResourceUrl(value) {
+function validateResourceUrl(value) {
   const url = String(value ?? '').trim()
   if (!url) return ''
   if (url.length > 500) return '링크는 500자 이하로 입력해 주세요.'

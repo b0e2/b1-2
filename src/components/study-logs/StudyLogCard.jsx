@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import StatusBadge from '../ui/StatusBadge.jsx'
 import TagBadge from '../ui/TagBadge.jsx'
@@ -10,7 +11,11 @@ const VISIBLE_TAGS = 2
 //
 // 카드 전체를 링크로 감싸지 않는다. 안에 수정·삭제 버튼이 있어
 // 링크 안에 버튼이 중첩되기 때문이다. 제목만 링크로 둔다.
-export default function StudyLogCard({ log, compact = false, isDeleting = false, onEdit, onDelete }) {
+//
+// memo 로 감싼 이유: 목록 화면에서 검색어를 한 글자 칠 때마다 화면이
+// 다시 그려지는데, 그때 카드 내용은 바뀌지 않는다. 카드가 여러 장이므로
+// 건너뛸 값이 있다. 넘기는 콜백도 useCallback 으로 고정해야 효과가 있다.
+function StudyLogCard({ log, compact = false, isDeleting = false, onEdit, onDelete }) {
   const [leadTag] = log.tags ?? []
   const visibleTags = (log.tags ?? []).slice(0, VISIBLE_TAGS)
   const restCount = (log.tags ?? []).length - visibleTags.length
@@ -63,3 +68,5 @@ export default function StudyLogCard({ log, compact = false, isDeleting = false,
     </article>
   )
 }
+
+export default memo(StudyLogCard)

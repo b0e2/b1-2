@@ -8,19 +8,13 @@ import StatCard from '../components/ui/StatCard.jsx'
 import TagBadge from '../components/ui/TagBadge.jsx'
 import { ChartIcon, LeafIcon, ListIcon } from '../components/ui/icons.jsx'
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
-import { formatDuration, formatMonthLabel } from '../lib/studyLogFormatters.js'
+import { formatDuration, formatMonthLabel, todayString } from '../lib/studyLogFormatters.js'
 import {
   calculateOverviewStats,
   getAvailableYears,
   getMonthlyCounts,
   rankTags,
 } from '../lib/studyLogSelectors.js'
-
-function todayString() {
-  const now = new Date()
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-}
 
 export default function StatsPage() {
   const navigate = useNavigate()

@@ -1,5 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
-import { ThemeContext } from '../hooks/useTheme.js'
+// eslint-disable react/only-export-components
+// 훅과 Provider 를 한 파일에 둔다. 나누면 파일만 늘고 설명할 것이 많아진다.
+// 개발 중 이 파일을 고칠 때 화면이 통째로 새로 뜨는 것은 감수한다.
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+
+const ThemeContext = createContext(null)
+
+export function useTheme() {
+  const value = useContext(ThemeContext)
+  if (!value) throw new Error('useTheme 은 ThemeProvider 안에서만 쓸 수 있습니다.')
+  return value
+}
 
 const STORAGE_KEY = 'til-theme'
 const PREFERENCES = ['light', 'dark', 'system']

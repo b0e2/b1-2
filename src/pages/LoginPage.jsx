@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
-import FormField from '../components/ui/FormField.jsx'
+import { TextField } from '../components/ui/FormField.jsx'
 import { LeafIcon } from '../components/ui/icons.jsx'
-import { useAuth } from '../hooks/useAuth.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 const MIN_PASSWORD = 6
 
@@ -105,61 +105,40 @@ export default function LoginPage() {
 
         <form className="auth__form" onSubmit={handleSubmit} noValidate>
           {isSignUp ? (
-            <FormField id="name" label="표시할 이름" required error={errors.name}>
-              {({ id, describedBy, invalid }) => (
-                <input
-                  id={id}
-                  name="name"
-                  type="text"
-                  className="input"
-                  value={values.name}
-                  maxLength={20}
-                  autoComplete="nickname"
-                  aria-invalid={invalid || undefined}
-                  aria-describedby={describedBy || undefined}
-                  onChange={handleChange}
-                />
-              )}
-            </FormField>
+            <TextField
+              name="name"
+              label="표시할 이름"
+              required
+              value={values.name}
+              error={errors.name}
+              maxLength={20}
+              autoComplete="nickname"
+              onChange={handleChange}
+            />
           ) : null}
 
-          <FormField id="email" label="이메일" required error={errors.email}>
-            {({ id, describedBy, invalid }) => (
-              <input
-                id={id}
-                name="email"
-                type="email"
-                className="input"
-                value={values.email}
-                autoComplete="email"
-                aria-invalid={invalid || undefined}
-                aria-describedby={describedBy || undefined}
-                onChange={handleChange}
-              />
-            )}
-          </FormField>
+          <TextField
+            name="email"
+            label="이메일"
+            required
+            type="email"
+            value={values.email}
+            error={errors.email}
+            autoComplete="email"
+            onChange={handleChange}
+          />
 
-          <FormField
-            id="password"
+          <TextField
+            name="password"
             label="비밀번호"
             required
+            type="password"
+            value={values.password}
             error={errors.password}
             hint={isSignUp ? `${MIN_PASSWORD}자 이상 입력해 주세요.` : undefined}
-          >
-            {({ id, describedBy, invalid }) => (
-              <input
-                id={id}
-                name="password"
-                type="password"
-                className="input"
-                value={values.password}
-                autoComplete={isSignUp ? 'new-password' : 'current-password'}
-                aria-invalid={invalid || undefined}
-                aria-describedby={describedBy || undefined}
-                onChange={handleChange}
-              />
-            )}
-          </FormField>
+            autoComplete={isSignUp ? 'new-password' : 'current-password'}
+            onChange={handleChange}
+          />
 
           <Button
             type="submit"

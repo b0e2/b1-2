@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
+import DeleteLogDialog from '../components/study-logs/DeleteLogDialog.jsx'
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
@@ -201,12 +202,9 @@ export default function StudyLogDetailPage() {
         onConfirm={confirmReopen}
       />
 
-      <ConfirmDialog
-        open={dialog === 'delete'}
-        title="이 TIL을 삭제할까요?"
-        description="삭제하면 되돌릴 수 없습니다."
-        confirmLabel="삭제"
-        isProcessing={isDeleting}
+      <DeleteLogDialog
+        target={dialog === 'delete' ? log : null}
+        isDeleting={isDeleting}
         error={mutationError}
         onCancel={() => setDialog(null)}
         onConfirm={confirmDelete}

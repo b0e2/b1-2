@@ -2,8 +2,8 @@ import { useState } from 'react'
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import Button from '../components/ui/Button.jsx'
-import { useAuth } from '../hooks/useAuth.js'
-import { useTheme } from '../hooks/useTheme.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
+import { useTheme } from '../contexts/ThemeContext.jsx'
 
 const THEME_OPTIONS = [
   { value: 'light', label: '라이트', description: '밝고 편안한 분위기' },
