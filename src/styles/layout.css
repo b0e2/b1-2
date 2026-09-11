@@ -117,7 +117,10 @@
 .app-header {
   position: sticky;
   top: 0;
-  display: flex;
+  /* 3단 그리드로 둔다. flex 로 늘리면 양옆 요소의 너비에 따라
+     검색창 위치가 흔들려 본문 가운데와 맞지 않는다. */
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 620px) 1fr;
   align-items: center;
   gap: var(--space-4);
   height: var(--header-height);
@@ -128,6 +131,8 @@
 }
 
 .app-header__menu {
+  grid-column: 1;
+  justify-self: start;
   display: none;
   align-items: center;
   border: 0;
@@ -138,12 +143,11 @@
 }
 
 .app-header__search {
+  grid-column: 2;
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  flex: 1;
-  max-width: 620px;
   padding: 0 var(--space-4);
   height: 42px;
   background: var(--color-surface);
@@ -172,10 +176,11 @@
 }
 
 .app-header__user {
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: auto;
   color: var(--color-text);
   font-size: 0.925rem;
   font-weight: 500;
@@ -246,6 +251,7 @@ button.app-header__user:hover {
 
   .app-header {
     padding: 0 var(--space-4);
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
   .app-header__menu {
