@@ -68,7 +68,7 @@ npm run lint      # 정적 검사
 | 배포 | Vercel |
 | 스타일 | 일반 CSS |
 
-Supabase 는 학습 시간 5~720분, 이해도 1~5, 완료 상태면 회고 필수 같은 규칙을 테이블 제약으로 표현할 수 있어 골랐습니다.
+Supabase 는 값의 범위와 조건을 테이블 제약으로 표현할 수 있어 골랐습니다.
 
 상태 관리 라이브러리와 데이터 조회 라이브러리는 쓰지 않았습니다.
 
@@ -226,7 +226,7 @@ src/
 │
 ├── lib/
 │   ├── supabaseClient        Supabase 연결 생성, 환경변수 확인
-│   ├── studyLogValidation    제목 2자 이상, 시간 5~720분 같은 규칙 판정
+│   ├── studyLogValidation    입력값이 규칙에 맞는지 판정
 │   ├── studyLogFormatters    90 → "1시간 30분", 태그 → 색과 이니셜
 │   └── studyLogSelectors     검색, 정렬, 태그 집계, 통계 계산
 │
