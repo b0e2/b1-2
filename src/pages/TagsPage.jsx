@@ -10,7 +10,7 @@ import { getTagInitial, getTagTone } from '../lib/studyLogFormatters.js'
 import { getTagSummaries } from '../lib/studyLogSelectors.js'
 
 const SORT_OPTIONS = [
-  { value: 'count', label: '학습 기록 많은 순' },
+  { value: 'count', label: '기록 많은 순' },
   { value: 'name', label: '이름순' },
 ]
 

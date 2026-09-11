@@ -161,8 +161,8 @@ export function rankTags(logs, limit = 5) {
 export const SORT_OPTIONS = [
   { value: 'recent', label: '최신순' },
   { value: 'oldest', label: '오래된순' },
-  { value: 'longest', label: '학습시간 긴 순' },
-  { value: 'understanding', label: '이해도 높은 순' },
+  { value: 'longest', label: '학습시간 순' },
+  { value: 'understanding', label: '이해도 순' },
 ]
 
 const DEFAULT_SORT = 'recent'
