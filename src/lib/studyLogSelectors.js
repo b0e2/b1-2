@@ -59,3 +59,71 @@ export function getTagCounts(logs) {
 export function selectRecentLogs(logs, limit = 5) {
   return sortStudyLogs(logs, 'recent').slice(0, limit)
 }
+
+// ── 통계 ─────────────────────────────────────────────
+
+function toDateKey(value) {
+  return String(value ?? '').slice(0, 10)
+}
+
+function shiftDays(dateKey, days) {
+  const [y, m, d] = dateKey.split('-').map(Number)
+  const date = new Date(y, m - 1, d + days)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+
+// 기록한 날이 아니라 학습한 날을 센다.
+// 주말에 몰아서 적더라도 학습한 날짜가 이어지면 연속으로 본다.
+//
+// 오늘 아직 안 썼을 수 있으므로 어제부터 시작하는 경우도 연속으로 인정한다.
+// 그러지 않으면 매일 자정에 기록이 끊긴 것처럼 보인다.
+export function calculateStudyStreak(logs, today) {
+  const days = new Set(logs.map((log) => toDateKey(log.study_date)))
+  if (days.size === 0) return 0
+
+  let cursor = days.has(today) ? today : shiftDays(today, -1)
+  if (!days.has(cursor)) return 0
+
+  let streak = 0
+  while (days.has(cursor)) {
+    streak += 1
+    cursor = shiftDays(cursor, -1)
+  }
+  return streak
+}
+
+export function calculateOverviewStats(logs, today) {
+  const month = today.slice(0, 7)
+
+  return {
+    total: logs.length,
+    streak: calculateStudyStreak(logs, today),
+    thisMonth: logs.filter((log) => toDateKey(log.study_date).startsWith(month)).length,
+    totalMinutes: logs.reduce((sum, log) => sum + (log.duration_minutes ?? 0), 0),
+  }
+}
+
+export function getAvailableYears(logs) {
+  const years = new Set(logs.map((log) => toDateKey(log.study_date).slice(0, 4)))
+  return [...years].sort((a, b) => b.localeCompare(a))
+}
+
+// 기록이 없는 달도 0으로 남긴다. 있는 달만 그리면 축이 들쭉날쭉해
+// 어느 달이 비었는지 읽히지 않는다.
+export function getMonthlyCounts(logs, year) {
+  const counts = Array.from({ length: 12 }, (_, index) => ({ month: index, count: 0 }))
+
+  for (const log of logs) {
+    const key = toDateKey(log.study_date)
+    if (key.slice(0, 4) !== String(year)) continue
+    const monthIndex = Number(key.slice(5, 7)) - 1
+    if (counts[monthIndex]) counts[monthIndex].count += 1
+  }
+
+  return counts
+}
+
+export function rankTags(logs, limit = 5) {
+  return getTagCounts(logs).slice(0, limit)
+}
