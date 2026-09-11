@@ -78,7 +78,7 @@ function shiftDays(dateKey, days) {
 //
 // 오늘 아직 안 썼을 수 있으므로 어제부터 시작하는 경우도 연속으로 인정한다.
 // 그러지 않으면 매일 자정에 기록이 끊긴 것처럼 보인다.
-export function calculateStudyStreak(logs, today) {
+function calculateStudyStreak(logs, today) {
   const days = new Set(logs.map((log) => toDateKey(log.study_date)))
   if (days.size === 0) return 0
 

@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import StudyLogCard from '../components/study-logs/StudyLogCard.jsx'
-import ConfirmDialog from '../components/ui/ConfirmDialog.jsx'
+import DeleteLogDialog from '../components/study-logs/DeleteLogDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
 import LoadingState from '../components/ui/LoadingState.jsx'
 import PageHeader from '../components/ui/PageHeader.jsx'
 import TagBadge from '../components/ui/TagBadge.jsx'
 import { SearchIcon } from '../components/ui/icons.jsx'
+import { useLogDeletion } from '../hooks/useLogDeletion.js'
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
 import { filterStudyLogs, getTagCounts, sortStudyLogs } from '../lib/studyLogSelectors.js'
 
@@ -17,10 +18,11 @@ export default function TagsPage() {
   // 목록 화면과 같은 훅을 여기서 따로 부른다.
   // 공유 저장소를 두지 않아 이 화면도 자기 불러오는 중과 실패 상태를 갖는다.
   const { logs, isLoading, error, refetch, deletingId, mutationError, removeLog } = useStudyLogs()
+  const deletion = useLogDeletion(removeLog)
+  const goEdit = useCallback((item) => navigate(`/logs/${item.id}/edit`), [navigate])
 
   const selectedTag = searchParams.get('tag') ?? ''
   const [tagQuery, setTagQuery] = useState('')
-  const [target, setTarget] = useState(null)
 
   // 태그를 따로 저장하지 않고 기록에서 센다.
   // 기록을 지우거나 태그를 고치면 개수가 저절로 맞춰진다.
@@ -42,11 +44,6 @@ export default function TagsPage() {
     if (tag) next.set('tag', tag)
     else next.delete('tag')
     setSearchParams(next)
-  }
-
-  async function confirmDelete() {
-    const removed = await removeLog(target.id)
-    if (removed) setTarget(null)
   }
 
   // 불러오는 중에도 화면 제목은 남긴다. 제목까지 사라지면
@@ -125,7 +122,7 @@ export default function TagsPage() {
             </button>
           </div>
 
-          {mutationError && !target ? (
+          {mutationError && !deletion.target ? (
             <p className="form__alert" role="alert">
               {mutationError}
             </p>
@@ -145,8 +142,8 @@ export default function TagsPage() {
                   <StudyLogCard
                     log={log}
                     isDeleting={deletingId === log.id}
-                    onEdit={(item) => navigate(`/logs/${item.id}/edit`)}
-                    onDelete={setTarget}
+                    onEdit={goEdit}
+                    onDelete={deletion.ask}
                   />
                 </li>
               ))}
@@ -157,15 +154,12 @@ export default function TagsPage() {
         <p className="tags__hint">태그를 고르면 해당 TIL을 모아 보여드려요.</p>
       )}
 
-      <ConfirmDialog
-        open={Boolean(target)}
-        title="이 TIL을 삭제할까요?"
-        description={target ? `“${target.title}” 기록이 사라집니다. 되돌릴 수 없습니다.` : ''}
-        confirmLabel="삭제"
-        isProcessing={Boolean(target) && deletingId === target.id}
+      <DeleteLogDialog
+        target={deletion.target}
+        isDeleting={deletion.target?.id === deletingId}
         error={mutationError}
-        onCancel={() => setTarget(null)}
-        onConfirm={confirmDelete}
+        onCancel={deletion.cancel}
+        onConfirm={deletion.confirm}
       />
     </>
   )

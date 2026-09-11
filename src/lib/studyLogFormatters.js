@@ -1,3 +1,11 @@
+// 오늘 날짜를 로컬 기준으로 만든다.
+// toISOString 은 UTC 라 자정 전후에 하루가 어긋난다.
+export function todayString() {
+  const now = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
 const UNDERSTANDING_LABELS = {
   1: '거의 이해 못함',
   2: '조금 이해함',
