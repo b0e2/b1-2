@@ -2,7 +2,7 @@
 
 오늘 배운 것을 기록하고, 태그로 모아 보고, 회고와 함께 완료로 남기는 학습 기록 서비스입니다.
 
-공부한 내용을 적어 두기만 하면 다시 열어보지 않게 됩니다. 이 서비스는 기록을 남길 때 **학습 시간과 이해도를 함께 받고, 완료로 표시하려면 회고를 요구합니다.** 무엇을 얼마나 했는지가 통계로 쌓이고, 태그로 어떤 주제에 시간을 썼는지 보입니다.
+기록을 남길 때 학습 시간과 이해도를 함께 받습니다. 완료로 표시하려면 회고가 필요합니다. 쌓인 기록은 태그별·월별 통계로 볼 수 있습니다.
 
 | | |
 |---|---|
@@ -37,7 +37,7 @@ npm run dev             # http://localhost:5173
 | `VITE_SUPABASE_URL` | Supabase 프로젝트 주소 |
 | `VITE_SUPABASE_ANON_KEY` | 브라우저에 노출되는 공개 키 |
 
-Vite 는 `VITE_` 로 시작하는 값만 브라우저 코드에 넣습니다. 이름이 다르면 값이 비어 실행 중에 실패하므로, 시작 시점에 확인하고 없으면 바로 멈춥니다.
+Vite 는 `VITE_` 로 시작하는 값만 브라우저 코드에 넣습니다. 없으면 시작 시점에 멈춥니다.
 
 ```js
 // src/lib/supabaseClient.js
@@ -46,7 +46,7 @@ if (!url || !anonKey) {
 }
 ```
 
-비밀 키는 브라우저에 넣지 않습니다. 공개 키만 쓰고 데이터 보호는 데이터베이스의 접근 정책이 맡습니다.
+공개 키만 쓰고 데이터 보호는 접근 정책이 맡습니다.
 
 데이터베이스는 `supabase/schema.sql` 을 SQL Editor 에 실행해 만듭니다. 스키마를 바꾼 이력과 실행 순서는 `supabase/migrations/README.md` 에 있습니다.
 
@@ -68,9 +68,9 @@ npm run lint      # 정적 검사
 | 배포 | Vercel |
 | 스타일 | 일반 CSS |
 
-Supabase 를 고른 이유는 다루는 데이터가 한 종류이고, **값의 범위와 조건을 테이블 제약으로 그대로 표현할 수 있기** 때문입니다. 학습 시간 5~720분, 이해도 1~5, 완료 상태면 회고 필수 같은 규칙이 스키마에 남습니다. 인증도 같은 데이터베이스 안에 있어 사용자 식별과 접근 정책이 바로 이어집니다.
+Supabase 는 학습 시간 5~720분, 이해도 1~5, 완료 상태면 회고 필수 같은 규칙을 테이블 제약으로 표현할 수 있어 골랐습니다.
 
-상태 관리 라이브러리와 데이터 조회 라이브러리는 쓰지 않았습니다. 무엇을 언제 요청하고 그 결과를 어떤 상태로 둘지 직접 정하는 것이 이 프로젝트의 목적입니다.
+상태 관리 라이브러리와 데이터 조회 라이브러리는 쓰지 않았습니다.
 
 ---
 
@@ -98,14 +98,14 @@ Supabase 를 고른 이유는 다루는 데이터가 한 종류이고, **값의 
 </Routes>
 ```
 
-로그인 화면과 Not Found 만 보호 바깥에 있습니다. 사이드바가 필요 없는 화면이기도 합니다. 사이드바의 `NavLink` 다섯 개(홈·학습 목록·태그·통계·설정)가 주요 화면을 잇고, 우상단 사용자 버튼이 설정으로 갑니다.
+로그인 화면과 Not Found 만 보호 바깥에 있습니다. 사이드바의 `NavLink` 다섯 개(홈·학습 목록·태그·통계·설정)와 우상단 사용자 버튼이 화면을 잇습니다.
 
-**"없는 주소"는 두 가지로 나눴습니다.**
+없는 주소는 두 가지로 나뉩니다.
 
 - `/아무거나` → 라우터의 `*` 가 잡아 Not Found 화면
 - `/logs/존재하지않는-uuid` → 상세 화면의 "기록을 찾을 수 없습니다"
 
-주소 형식은 맞는데 그 데이터가 없는 경우는 다른 상황이라 구분합니다. `useStudyLog` 이 0행을 오류와 따로 구분하기 때문에 가능합니다.
+`useStudyLog` 이 0행을 오류와 따로 구분합니다.
 
 ```js
 } else if (!data) {
@@ -113,8 +113,6 @@ Supabase 를 고른 이유는 다루는 데이터가 한 종류이고, **값의 
   setIsNotFound(true)
 }
 ```
-
-목록과 태그 화면도 역할이 다릅니다. **태그 화면은 어떤 주제를 얼마나 다뤘는지만 보여주고**, 실제 기록은 학습 목록으로 넘겨 그 화면의 필터로 봅니다. 같은 목록이 두 화면에 있으면 어느 쪽을 봐야 할지 알 수 없기 때문입니다.
 
 ---
 
@@ -137,7 +135,9 @@ Supabase 를 고른 이유는 다루는 데이터가 한 종류이고, **값의 
 | `is_completed` | boolean | 기본 false |
 | `created_at` `updated_at` | timestamptz | |
 
-태그는 배열 컬럼에 두고 개수와 순위는 기록에서 계산합니다. 태그를 따로 저장하면 기록을 지울 때 개수를 함께 줄여야 하고 어긋나면 맞출 방법이 없지만, 계산하면 어긋날 수가 없습니다. 각 태그의 색은 이름을 해시해서 정해 같은 태그가 언제나 같은 색을 갖습니다.
+태그는 배열 컬럼에 있고 개수와 순위는 기록에서 계산합니다. 별도 테이블이 없어 기록을 지우면 개수도 함께 줄어듭니다.
+
+태그 색은 이름을 해시해서 정합니다. 같은 태그는 언제나 같은 색입니다.
 
 ### 접근 정책
 
@@ -155,7 +155,7 @@ create policy auth_update_study_logs
   with check (auth.uid() = user_id);
 ```
 
-등록과 수정에 `with check` 를 함께 둔 것이 요점입니다. **화면을 조작해 다른 사람의 식별자를 보내도 데이터베이스가 거부합니다.**
+`with check` 는 등록과 수정에 들어옵니다. 화면에서 다른 사람의 식별자를 보내도 거부됩니다.
 
 ### 검증이 놓인 자리
 
@@ -172,7 +172,7 @@ constraint study_logs_completed_requires_reflection
   )
 ```
 
-화면 검증은 사용자가 실수를 바로 알아차리게 하는 것이고, **실제 보장은 데이터베이스에 있습니다.** 화면을 건너뛰고 직접 요청을 보내도 완료 상태인데 회고가 없는 기록은 저장되지 않습니다.
+화면 검증을 건너뛰고 직접 요청을 보내도 완료 상태인데 회고가 없는 기록은 저장되지 않습니다.
 
 ---
 
@@ -180,21 +180,76 @@ constraint study_logs_completed_requires_reflection
 
 ```
 src/
-├── pages/            라우트 하나에 화면 하나
+├── main.jsx                  React 를 #root 에 붙이고 라우터로 감쌈
+├── App.jsx                   라우트 10개 선언, 로그인 확인과 레이아웃 조립
+│
+├── pages/                    주소 하나에 파일 하나
+│   ├── DashboardPage         최근 기록 5건과 바로가기 버튼
+│   ├── StudyLogsPage         전체 목록, 검색, 태그 필터, 정렬, 수정, 삭제
+│   ├── NewStudyLogPage       새 기록 작성 폼
+│   ├── StudyLogDetailPage    기록 전체 내용, 완료 전환, 삭제
+│   ├── EditStudyLogPage      기존 기록 수정
+│   ├── TagsPage              태그별 기록 수와 대표 제목
+│   ├── StatsPage             총 개수, 연속 학습일, 월별 막대, 태그 순위
+│   ├── SettingsPage          테마 선택, 로그아웃
+│   ├── LoginPage             로그인, 가입
+│   └── NotFoundPage          정의되지 않은 주소 안내
+│
 ├── components/
-│   ├── ui/           기록이 무엇인지 모름
-│   └── study-logs/   기록 객체를 앎
-├── hooks/            언제 요청할지, 결과를 어떤 상태로 둘지
-├── lib/              이 값이 올바른가 · 어떻게 보일까 · 무엇을 계산할까
-├── contexts/         로그인한 사용자, 테마
-└── styles/           토큰 → 기본값 → 레이아웃 → 공용 → 도메인 → 화면
+│   ├── AppLayout             사이드바 + 헤더 + 본문 배치
+│   ├── Sidebar               로고와 메뉴 5개, 좁은 화면에서는 서랍
+│   ├── Header                전역 검색창과 로그인 사용자 표시
+│   │
+│   ├── ui/
+│   │   ├── Button            variant 로 색, isLoading 으로 진행 중 표시
+│   │   ├── PageHeader        화면 제목, 설명, 우측 버튼
+│   │   ├── FormField         라벨 + 입력 + 오류 + 글자수
+│   │   ├── LoadingState      회전 표시와 안내 문구
+│   │   ├── ErrorState        실패 안내와 다시 시도 버튼
+│   │   ├── EmptyState        비었음 안내와 다음 행동 버튼
+│   │   ├── ConfirmDialog     삭제 전 확인 대화상자
+│   │   ├── StatusBadge       완료 / 진행 중 표시
+│   │   ├── TagBadge          #태그 표시, 누르면 필터 칩
+│   │   ├── StatCard          통계 숫자 한 칸
+│   │   └── icons             인라인 SVG 아이콘 10개
+│   │
+│   └── study-logs/
+│       ├── StudyLogCard      목록 한 줄. 썸네일, 제목, 태그, 날짜, 버튼
+│       ├── StudyLogForm      작성과 수정이 함께 쓰는 입력 폼
+│       ├── TagInput          엔터로 태그 추가, X 로 삭제
+│       └── DeleteLogDialog   삭제 확인 대화상자와 그 상태
+│
+├── hooks/
+│   ├── useStudyLogs          목록 조회, 삭제
+│   ├── useStudyLog           한 건 조회, 수정, 삭제, 완료 전환, 등록
+│   └── useStudyLogForm       폼 입력값, 오류, 제출 진행 상태
+│
+├── lib/
+│   ├── supabaseClient        Supabase 연결 생성, 환경변수 확인
+│   ├── studyLogValidation    제목 2자 이상, 시간 5~720분 같은 규칙 판정
+│   ├── studyLogFormatters    90 → "1시간 30분", 태그 → 색과 이니셜
+│   └── studyLogSelectors     검색, 정렬, 태그 집계, 통계 계산
+│
+├── contexts/
+│   ├── AuthContext           로그인 세션 구독, 로그인 · 가입 · 로그아웃
+│   └── ThemeContext          밝게 / 어둡게 / 시스템 따라가기
+│
+└── styles/                   불러오는 순서대로 뒤가 앞을 덮음
+    ├── tokens.css            색, 간격, 반경. 테마는 여기 값만 바뀜
+    ├── base.css              요소 기본값, 화면 낭독기용 숨김 클래스
+    ├── layout.css            사이드바, 헤더, 본문 폭
+    ├── ui.css                버튼, 입력, 배지, 대화상자
+    ├── study-logs.css        목록 줄, 태그 입력, 상세 카드
+    └── pages.css             히어로, 통계 차트, 로그인, 설정
 ```
 
-컴포넌트는 **기록을 아는가**로 나눴습니다. `ui/` 안의 것들은 `log` 가 무엇인지 모르고 값과 콜백만 받아 다른 프로젝트에 그대로 옮길 수 있습니다. `study-logs/` 안의 것들은 기록 객체를 받으며 이 서비스를 벗어나면 쓸 수 없습니다.
+`ui/` 는 `log` 객체를 모릅니다. `Button` 은 `variant` 와 `children` 만 받습니다. `study-logs/` 는 `log.tags` `log.is_completed` 를 읽습니다.
 
-재사용 컴포넌트는 13개이고 전부 prop 에 따라 표시나 동작이 달라집니다.
+`lib/` 는 React 를 쓰지 않습니다. 값을 넣으면 결과가 나오는 함수만 있어 화면 없이 실행됩니다. `hooks/` 는 `useState` 와 `useEffect` 로 요청 시점과 상태를 다룹니다.
 
-| 컴포넌트 | 받는 prop |
+재사용 컴포넌트 13개와 각각이 받는 prop 입니다.
+
+| 컴포넌트 | prop |
 |---|---|
 | `Button` | `variant` `size` `type` `disabled` `isLoading` `loadingLabel` `onClick` |
 | `PageHeader` | `title` `description` `action` |
@@ -210,11 +265,7 @@ src/
 | `StudyLogCard` | `log` `compact` `isDeleting` `onEdit` `onDelete` |
 | `StudyLogForm` | `values` `errors` `touched` `isSubmitting` `submitError` `submitLabel` `today` `tagSuggestions` `onChange` `onBlur` `onTagsChange` `onSubmit` `onCancel` |
 
-`AppLayout` `Sidebar` `Header` 는 세지 않았습니다. prop 없이 항상 같은 것을 그리기 때문입니다.
-
-**억지로 나누지 않은 사례도 있습니다.** 카드를 반복만 하는 `StudyLogList` 를 만들었다가 지웠습니다. `logs.map()` 이면 충분하고, 그런 컴포넌트는 파일만 늘고 왜 나눴는지 답할 것이 없습니다.
-
-계층은 **React 가 필요한가**로 나눴습니다. `lib/` 에는 같은 입력에 같은 결과를 내는 함수만 두어서 검증 규칙을 확인하려고 화면을 띄울 필요가 없습니다. 컴포넌트는 데이터를 직접 조회하지 않고 훅은 마크업을 돌려주지 않습니다.
+`AppLayout` `Sidebar` `Header` 는 prop 을 받지 않아 세지 않았습니다.
 
 ---
 
@@ -229,9 +280,9 @@ src/
 | `useCreateStudyLog()` | 등록 | 조회 없음 |
 | `useStudyLogForm()` | 입력 상태와 제출 흐름 | 없음 |
 
-목록과 단건을 나눈 것은 **생명주기가 다르기** 때문입니다. 목록은 화면에 들어올 때 한 번 부르면 되지만, 상세는 주소의 식별자가 바뀔 때마다 다시 불러야 합니다. 한 훅에 넣으면 의존성 배열이 서로 다른 두 흐름이 섞입니다.
+목록은 화면에 들어올 때 한 번, 상세는 주소의 식별자가 바뀔 때마다 부릅니다. 의존성 배열이 달라 훅을 나눴습니다.
 
-그리고 네 화면(`/`, `/logs`, `/tags`, `/stats`)이 같은 조회를 합니다. 화면마다 적으면 요청·중단·오류 처리가 네 번 복제됩니다.
+같은 조회를 네 화면(`/`, `/logs`, `/tags`, `/stats`)이 씁니다.
 
 ### 조회 — 정리까지
 
@@ -264,9 +315,9 @@ useEffect(() => {
 }, [reloadKey])
 ```
 
-`useStudyLog(id)` 은 의존성이 `[id, reloadKey]` 라 식별자가 바뀔 때마다 다시 돌고, 그때 이전 요청을 중단합니다. 그러지 않으면 A 를 열었다 빠르게 B 로 넘어갈 때 늦게 도착한 A 의 응답이 B 화면을 덮습니다.
+`useStudyLog(id)` 는 의존성이 `[id, reloadKey]` 입니다. 식별자가 바뀌면 이전 요청을 중단해 늦게 도착한 응답이 새 화면을 덮지 않습니다.
 
-**가장 중요한 건 의존성에 넣지 않은 것입니다.** 검색어·태그·정렬은 여기 없습니다. 넣었다면 한 글자 칠 때마다 요청이 나갔을 것입니다. 이 값들은 주소에 두고 화면에서 배열을 거르는 데만 씁니다.
+검색어·태그·정렬은 의존성에 없습니다. 주소에 두고 받아온 배열을 거르는 데만 씁니다.
 
 ### 등록
 
@@ -319,15 +370,13 @@ if (requestError) {
 setLogs((current) => current.filter((log) => log.id !== targetId))
 ```
 
-먼저 지우면 실패했을 때 사라진 행을 되살려야 합니다.
+서버가 성공을 돌려준 뒤에 배열에서 뺍니다.
 
-### 화면마다 따로 부르는 이유
+### 화면마다 따로 부름
 
-홈·학습 목록·태그·통계가 각자 `useStudyLogs()` 를 호출합니다. 하나로 합쳐 전역에 두지 않았습니다.
+홈·학습 목록·태그·통계가 각자 `useStudyLogs()` 를 호출합니다. 전역에 두지 않아 화면마다 자기 불러오는 중·실패·다시 시도 상태를 갖습니다.
 
-합치면 화면마다 갖고 있던 **불러오는 중과 실패 상태가 하나가 됩니다.** 통계에서 실패했을 때 목록도 실패한 것처럼 보이고, 어느 화면에서 다시 시도할지도 애매해집니다. 다루는 데이터가 적어 요청이 겹치는 비용보다 상태가 섞이지 않는 이점이 큽니다.
-
-전역 상태에는 로그인한 사용자와 테마만 둡니다. 둘 다 화면 전체가 함께 바뀌어야 하는 값입니다.
+전역 상태는 로그인 사용자와 테마 둘뿐입니다.
 
 ### 비동기 상태를 판정하는 순서
 
@@ -355,13 +404,13 @@ function renderBody() {
 }
 ```
 
-같은 세 컴포넌트를 `DashboardPage` `TagsPage` `StatsPage` 도 같은 순서로 씁니다. `EmptyState` 하나가 데이터 없음·검색 결과 없음·태그 결과 없음·상세 기록 없음 네 가지 의미로 쓰이고, 문구와 액션만 prop 으로 달라집니다.
+`DashboardPage` `TagsPage` `StatsPage` 도 같은 순서를 씁니다. `EmptyState` 하나가 데이터 없음·검색 결과 없음·태그 결과 없음·상세 기록 없음에 쓰이고 문구와 액션만 prop 으로 달라집니다.
 
 ### props 와 state
 
-`StudyLogCard` 는 **자기 상태가 하나도 없습니다.** 기록과 콜백만 받고, 삭제를 누르는 것도 `onDelete(log)` 로 위로 올립니다. 어떻게 처리할지는 화면이 정합니다.
+`StudyLogCard` 는 `useState` 를 쓰지 않습니다. 기록과 콜백만 받고 삭제 클릭은 `onDelete(log)` 로 올립니다.
 
-상태는 **그것이 필요한 가장 얕은 곳**에 둡니다.
+상태를 둔 자리입니다.
 
 | 상태 | 어디에 | 왜 |
 |---|---|---|
@@ -375,7 +424,7 @@ function renderBody() {
 
 ## 폼
 
-등록과 수정이 같은 `StudyLogForm` 을 씁니다. 값과 오류를 모두 바깥에서 받고 Supabase 를 모르기 때문에 가능합니다. 복제했다면 검증 규칙이 두 벌이 됐을 것입니다.
+등록과 수정이 같은 `StudyLogForm` 을 씁니다. 값과 오류를 모두 prop 으로 받고 Supabase 를 직접 부르지 않습니다.
 
 제출 흐름입니다.
 
@@ -409,13 +458,13 @@ async function handleSubmit(event) {
 }
 ```
 
-**중복 차단이 두 겹입니다.** 버튼에 `disabled` 를 걸고, 함수 진입부에서도 막습니다. 버튼만 막으면 입력칸에서 엔터를 연타할 때 뚫립니다.
+제출 중에는 버튼에 `disabled` 를 걸고 함수 진입부에서도 막습니다. 버튼만 막으면 입력칸에서 엔터를 연타할 때 통과합니다.
 
 ```jsx
 <Button type="submit" variant="primary" isLoading={isSubmitting} loadingLabel="저장 중">
 ```
 
-오류는 각 입력 아래에 붙고 `aria-describedby` 로 연결됩니다. **아직 건드리지 않은 필드는 보여주지 않습니다** — 폼을 열자마자 빨간 글씨가 가득하면 읽히지 않습니다.
+오류는 각 입력 아래에 붙고 `aria-describedby` 로 연결됩니다. 아직 건드리지 않은 필드는 `touched` 로 걸러 보여주지 않습니다.
 
 ```js
 const shown = (name) => (touched[name] ? errors[name] : undefined)
@@ -441,7 +490,7 @@ const updated = await toggleComplete(reflection)
 {log.is_completed ? <Button>완료 취소</Button> : <Button>학습 완료로 표시</Button>}
 ```
 
-규칙은 `lib` 한 곳에 있고 목록 훅도 같은 함수를 씁니다. 각자 구현하면 화면마다 회고 조건이 갈립니다.
+완료 규칙은 `lib/studyLogValidation.js` 에 있고 목록 훅도 같은 함수를 씁니다.
 
 ```js
 // src/lib/studyLogValidation.js
@@ -528,25 +577,12 @@ supabase.js  203 kB   거의 바뀌지 않음
 각 화면      1~5 kB   열 때 받음
 ```
 
-목록 카드는 `memo` 로 감쌌습니다. 검색어를 칠 때마다 화면이 다시 그려지지만 카드 내용은 바뀌지 않기 때문입니다. 다만 `memo` 만으로는 부족합니다 — 넘기는 함수가 매 렌더마다 새로 만들어지면 props 가 계속 달라져 무효가 됩니다.
+목록 카드는 `memo` 로 감쌌습니다. 검색어를 칠 때 카드는 다시 그리지 않습니다. 넘기는 함수도 `useCallback` 으로 고정해야 props 가 같게 유지됩니다.
 
 ```js
 const goEdit = useCallback((item) => navigate(`/logs/${item.id}/edit`), [navigate])
 ```
 
-파생 계산에만 `useMemo` 를 씁니다. 비싸서가 아니라 원본 상태와 계산 결과를 구분하기 위해서입니다.
+`useMemo` 는 `visibleLogs`, `tagCounts`, 통계 계산에 씁니다.
 
 ---
-
-## 배포
-
-Vercel 에 올립니다. 화면 전환을 브라우저 안에서 하므로 상세 주소를 직접 열면 서버가 그런 파일을 찾지 못합니다.
-
-```json
-// vercel.json
-{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
-```
-
-배포 환경에도 같은 두 환경변수를 등록해야 합니다. 값이 없으면 빌드는 성공하지만 화면이 뜨지 않습니다.
-
-로그인 시연을 위해 Supabase 의 메일 확인을 껐습니다.
