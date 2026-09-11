@@ -180,67 +180,14 @@ constraint study_logs_completed_requires_reflection
 
 ```
 src/
-├── main.jsx                  React 를 #root 에 붙이고 라우터로 감쌈
-├── App.jsx                   라우트 10개 선언, 로그인 확인과 레이아웃 조립
-│
-├── pages/                    주소 하나에 파일 하나
-│   ├── DashboardPage         최근 기록 5건과 바로가기 버튼
-│   ├── StudyLogsPage         전체 목록, 검색, 태그 필터, 정렬, 수정, 삭제
-│   ├── NewStudyLogPage       새 기록 작성 폼
-│   ├── StudyLogDetailPage    기록 전체 내용, 완료 전환, 삭제
-│   ├── EditStudyLogPage      기존 기록 수정
-│   ├── TagsPage              태그별 기록 수와 대표 제목
-│   ├── StatsPage             총 개수, 연속 학습일, 월별 막대, 태그 순위
-│   ├── SettingsPage          테마 선택, 로그아웃
-│   ├── LoginPage             로그인, 가입
-│   └── NotFoundPage          정의되지 않은 주소 안내
-│
+├── pages/          화면 10개. 주소 하나에 파일 하나
 ├── components/
-│   ├── AppLayout             사이드바 + 헤더 + 본문 배치
-│   ├── Sidebar               로고와 메뉴 5개, 좁은 화면에서는 서랍
-│   ├── Header                전역 검색창과 로그인 사용자 표시
-│   │
-│   ├── ui/
-│   │   ├── Button            variant 로 색, isLoading 으로 진행 중 표시
-│   │   ├── PageHeader        화면 제목, 설명, 우측 버튼
-│   │   ├── FormField         라벨 + 입력 + 오류 + 글자수
-│   │   ├── LoadingState      회전 표시와 안내 문구
-│   │   ├── ErrorState        실패 안내와 다시 시도 버튼
-│   │   ├── EmptyState        비었음 안내와 다음 행동 버튼
-│   │   ├── ConfirmDialog     삭제 전 확인 대화상자
-│   │   ├── StatusBadge       완료 / 진행 중 표시
-│   │   ├── TagBadge          #태그 표시, 누르면 필터 칩
-│   │   ├── StatCard          통계 숫자 한 칸
-│   │   └── icons             인라인 SVG 아이콘 10개
-│   │
-│   └── study-logs/
-│       ├── StudyLogCard      목록 한 줄. 썸네일, 제목, 태그, 날짜, 버튼
-│       ├── StudyLogForm      작성과 수정이 함께 쓰는 입력 폼
-│       ├── TagInput          엔터로 태그 추가, X 로 삭제
-│       └── DeleteLogDialog   삭제 확인 대화상자와 그 상태
-│
-├── hooks/
-│   ├── useStudyLogs          목록 조회, 삭제
-│   ├── useStudyLog           한 건 조회, 수정, 삭제, 완료 전환, 등록
-│   └── useStudyLogForm       폼 입력값, 오류, 제출 진행 상태
-│
-├── lib/
-│   ├── supabaseClient        Supabase 연결 생성, 환경변수 확인
-│   ├── studyLogValidation    입력값이 규칙에 맞는지 판정
-│   ├── studyLogFormatters    90 → "1시간 30분", 태그 → 색과 이니셜
-│   └── studyLogSelectors     검색, 정렬, 태그 집계, 통계 계산
-│
-├── contexts/
-│   ├── AuthContext           로그인 세션 구독, 로그인 · 가입 · 로그아웃
-│   └── ThemeContext          밝게 / 어둡게 / 시스템 따라가기
-│
-└── styles/                   불러오는 순서대로 뒤가 앞을 덮음
-    ├── tokens.css            색, 간격, 반경. 테마는 여기 값만 바뀜
-    ├── base.css              요소 기본값, 화면 낭독기용 숨김 클래스
-    ├── layout.css            사이드바, 헤더, 본문 폭
-    ├── ui.css                버튼, 입력, 배지, 대화상자
-    ├── study-logs.css        목록 줄, 태그 입력, 상세 카드
-    └── pages.css             히어로, 통계 차트, 로그인, 설정
+│   ├── ui/         Button, FormField, LoadingState, ConfirmDialog 등 공용
+│   └── study-logs/ StudyLogCard, StudyLogForm, TagInput 등 기록 전용
+├── hooks/          useStudyLogs, useStudyLog, useStudyLogForm
+├── lib/            Supabase 연결, 입력 검증, 표시 형식, 검색·통계 계산
+├── contexts/       AuthContext, ThemeContext
+└── styles/         tokens → base → layout → ui → study-logs → pages
 ```
 
 `ui/` 는 `log` 객체를 모릅니다. `Button` 은 `variant` 와 `children` 만 받습니다. `study-logs/` 는 `log.tags` `log.is_completed` 를 읽습니다.
