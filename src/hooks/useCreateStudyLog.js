@@ -18,7 +18,10 @@ export function useCreateStudyLog() {
 
   const clearCreateError = useCallback(() => setCreateError(null), [])
 
+  // 주인은 화면 입력값에서 받지 않는다. 지금 로그인한 사용자로 정한다.
+  // 화면을 조작해 다른 사람의 id 를 보내더라도 접근 정책이 거부한다.
   const createLog = useCallback(async (values) => {
+    const { data: auth } = await supabase.auth.getUser()
     if (mounted.current) {
       setIsCreating(true)
       setCreateError(null)
@@ -26,7 +29,7 @@ export function useCreateStudyLog() {
 
     const { data, error } = await supabase
       .from(STUDY_LOGS_TABLE)
-      .insert(values)
+      .insert({ ...values, user_id: auth?.user?.id ?? null })
       .select()
       .single()
 

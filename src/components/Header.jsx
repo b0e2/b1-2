@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDownIcon, MenuIcon, SearchIcon } from './ui/icons.jsx'
 import { buildGlobalSearchPath } from '../lib/searchParams.js'
+import { useAuth } from '../hooks/useAuth.js'
 
 // 상단 고정 영역. 전역 검색과 사용자 표시를 담당한다.
 // 내비게이션 책임은 Sidebar 로 옮겼다.
@@ -12,6 +13,7 @@ import { buildGlobalSearchPath } from '../lib/searchParams.js'
 export default function Header({ onOpenNav }) {
   const navigate = useNavigate()
   const [term, setTerm] = useState('')
+  const { displayName, initials } = useAuth()
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -43,14 +45,13 @@ export default function Header({ onOpenNav }) {
         />
       </form>
 
-      {/* 실제 세션 연결은 인증 태스크에서 한다. */}
-      <div className="app-header__user">
+      <button type="button" className="app-header__user" onClick={() => navigate('/settings')}>
         <span className="avatar" aria-hidden="true">
-          나
+          {initials}
         </span>
-        <span className="app-header__user-name">나의 기록</span>
+        <span className="app-header__user-name">{displayName}</span>
         <ChevronDownIcon />
-      </div>
+      </button>
     </header>
   )
 }

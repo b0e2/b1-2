@@ -1392,3 +1392,169 @@ a {
     display: none;
   }
 }
+
+/* ── 로그인 ─────────────────────────────────────────── */
+.auth {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--space-6);
+  background: var(--color-bg);
+}
+
+.auth__card {
+  width: min(400px, 100%);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-card);
+}
+
+.auth__brand {
+  margin-bottom: var(--space-6);
+}
+
+.auth__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.auth__logo svg {
+  color: var(--color-primary);
+}
+
+.auth__sub {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.auth__title {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.auth__description {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.auth__notice {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.875rem;
+}
+
+.auth__form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.auth__switch {
+  margin-top: var(--space-5);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.auth__switch .link {
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ── 헤더 사용자 버튼 ───────────────────────────────── */
+button.app-header__user {
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+  transition: background var(--transition);
+}
+
+button.app-header__user:hover {
+  background: rgb(74 90 60 / 8%);
+}
+
+/* ── 테마 선택 ──────────────────────────────────────── */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-option {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.theme-option:hover {
+  border-color: var(--color-primary);
+}
+
+.theme-option--on {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.theme-option input {
+  margin: 0 auto;
+  accent-color: var(--color-primary);
+}
+
+.theme-option__label {
+  font-weight: 600;
+}
+
+.theme-option__description {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ── 계정 ───────────────────────────────────────────── */
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.account-row__name {
+  font-weight: 600;
+}
+
+.account-row__email {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.account-row .button {
+  margin-left: auto;
+}
+
+@media (max-width: 900px) {
+  .theme-options {
+    grid-template-columns: 1fr;
+  }
+}
