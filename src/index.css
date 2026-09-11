@@ -15,6 +15,13 @@
   --color-danger-soft: #fbecea;
   --color-success: #3f6b47;
 
+  /* 히어로 배경. 토큰으로 두지 않으면 테마를 따라가지 않아
+     글자만 밝아지고 배경은 그대로여서 읽을 수 없게 된다. */
+  --hero-from: #f0ede1;
+  --hero-to: #e5e6d6;
+  --hero-glow: #eae7d6;
+  --hero-ornament: 0.18;
+
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -49,6 +56,7 @@
   --color-primary-soft: #2f3a29;
   --color-danger: #e8837a;
   --color-danger-soft: #3a2724;
+
 }
 
 /* ── base ───────────────────────────────────────────── */
@@ -304,6 +312,14 @@ a {
 
 /* ── 히어로 ─────────────────────────────────────────── */
 .hero {
+  /* 히어로는 디자인상 사진 자리라 두 테마에서 같은 크림 배경을 쓴다.
+     배경이 안 바뀌므로 그 위의 글자와 버튼도 밝은 테마 값으로 고정한다.
+     이 블록 안에서만 토큰을 덮어써서 자식 전체에 적용한다. */
+  --color-text: #1f2420;
+  --color-text-muted: #6b7266;
+  --color-surface: #ffffff;
+  --color-border: #ddd9cb;
+
   position: relative;
   display: flex;
   align-items: center;
@@ -312,8 +328,8 @@ a {
   border-radius: var(--radius-lg);
   overflow: hidden;
   background:
-    radial-gradient(120% 150% at 88% 12%, #eae7d6 0%, transparent 62%),
-    linear-gradient(135deg, #f0ede1 0%, #e5e6d6 100%);
+    radial-gradient(120% 150% at 88% 12%, var(--hero-glow) 0%, transparent 62%),
+    linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
 }
 
 .hero__body {
@@ -332,7 +348,7 @@ a {
   gap: var(--space-8);
   padding-right: var(--space-8);
   color: var(--color-primary);
-  opacity: 0.18;
+  opacity: var(--hero-ornament);
   pointer-events: none;
 }
 
@@ -1339,7 +1355,8 @@ a {
   width: 100%;
   min-height: 2px;
   border-radius: 4px 4px 0 0;
-  background: #b3c4a2;
+  background: var(--color-primary);
+  opacity: 0.55;
   align-self: end;
 }
 
