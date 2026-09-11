@@ -1,6 +1,6 @@
 import Button from '../ui/Button.jsx'
 import FormField from '../ui/FormField.jsx'
-import TextField from '../ui/TextField.jsx'
+import { TextField } from '../ui/FormField.jsx'
 import TagInput from './TagInput.jsx'
 import {
   DURATION_MINUTES_MAX,

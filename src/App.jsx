@@ -1,9 +1,8 @@
 import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import AppLayout from './components/AppLayout.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LoadingState from './components/ui/LoadingState.jsx'
-import { AuthProvider } from './contexts/AuthContext.jsx'
+import { AuthProvider, useAuth } from './contexts/AuthContext.jsx'
 import { ThemeProvider } from './contexts/ThemeContext.jsx'
 
 // 화면은 필요할 때 받아온다.
@@ -19,6 +18,20 @@ const StatsPage = lazy(() => import('./pages/StatsPage.jsx'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage.jsx'))
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'))
+
+function ProtectedRoute() {
+  const { user, isAuthLoading } = useAuth()
+  const location = useLocation()
+
+  // 세션을 확인하는 동안 로그인 화면으로 보내면, 이미 로그인한 사람이
+  // 새로고침할 때마다 로그인 화면이 한 번 깜빡인다.
+  if (isAuthLoading) return <LoadingState message="확인하는 중입니다." />
+
+  // 가려던 곳을 들고 간다. 로그인에 성공하면 그리로 돌려보낸다.
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
+
+  return <Outlet />
+}
 
 // 공통 레이아웃 안쪽에는 사이드바가 필요한 화면만 둔다.
 // 로그인과 NotFound 는 단독으로 보여야 하므로 바깥에 둔다.

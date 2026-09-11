@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import StudyLogForm from '../components/study-logs/StudyLogForm.jsx'
 import PageHeader from '../components/ui/PageHeader.jsx'
-import { useCreateStudyLog } from '../hooks/useCreateStudyLog.js'
 import { useStudyLogForm } from '../hooks/useStudyLogForm.js'
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
 import { STUDY_LOG_INITIAL_VALUES } from '../lib/studyLogValidation.js'

@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import StudyLogCard from '../components/study-logs/StudyLogCard.jsx'
-import DeleteLogDialog from '../components/study-logs/DeleteLogDialog.jsx'
+import DeleteLogDialog, { useLogDeletion } from '../components/study-logs/DeleteLogDialog.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ErrorState from '../components/ui/ErrorState.jsx'
 import LoadingState from '../components/ui/LoadingState.jsx'
 import { LeafIcon, PlusIcon } from '../components/ui/icons.jsx'
-import { useLogDeletion } from '../hooks/useLogDeletion.js'
+
 import { useStudyLogs } from '../hooks/useStudyLogs.js'
 import { selectRecentLogs } from '../lib/studyLogSelectors.js'
 

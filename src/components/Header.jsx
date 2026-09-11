@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ChevronDownIcon, MenuIcon, SearchIcon } from './ui/icons.jsx'
-import { buildGlobalSearchPath } from '../lib/searchParams.js'
-import { useAuth } from '../hooks/useAuth.js'
+import { buildGlobalSearchPath } from '../lib/studyLogSelectors.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 // 자체 검색이 있거나 검색할 대상이 없는 화면에서는 상단 검색을 숨긴다.
 // 한 화면에 검색창이 둘이면 어느 쪽이 동작하는지 알기 어렵다.

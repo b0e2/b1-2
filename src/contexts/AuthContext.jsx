@@ -1,6 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+// eslint-disable react/only-export-components
+// 훅과 Provider 를 한 파일에 둔다. 나누면 파일만 늘고 설명할 것이 많아진다.
+// 개발 중 이 파일을 고칠 때 화면이 통째로 새로 뜨는 것은 감수한다.
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
-import { AuthContext } from '../hooks/useAuth.js'
+
+const AuthContext = createContext(null)
+
+export function useAuth() {
+  const value = useContext(AuthContext)
+  if (!value) throw new Error('useAuth 는 AuthProvider 안에서만 쓸 수 있습니다.')
+  return value
+}
 
 function initialsOf(name, email) {
   const source = String(name ?? '').trim() || String(email ?? '').trim()

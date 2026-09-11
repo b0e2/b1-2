@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
-import TextField from '../components/ui/TextField.jsx'
+import { TextField } from '../components/ui/FormField.jsx'
 import { LeafIcon } from '../components/ui/icons.jsx'
-import { useAuth } from '../hooks/useAuth.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 const MIN_PASSWORD = 6
 
