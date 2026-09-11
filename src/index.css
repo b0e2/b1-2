@@ -319,6 +319,10 @@ a {
   --color-text-muted: #6b7266;
   --color-surface: #ffffff;
   --color-border: #ddd9cb;
+  /* 토큰만 덮으면 소용이 없다. color 를 선언하지 않은 자식은
+     body 에서 이미 계산된 색을 그대로 물려받는다. 여기서 한 번 선언해야
+     자식들이 이 색을 상속한다. */
+  color: var(--color-text);
 
   position: relative;
   display: flex;
